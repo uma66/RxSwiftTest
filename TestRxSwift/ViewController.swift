@@ -179,6 +179,8 @@ class ViewController: UIViewController {
         
         str2.asObservable()
             .map { $0 }
+            // モデルのプロパティに格納された値の条件判定ロジック
+            .filter { ($0?.characters.count)! > 0 }
             .bindTo(testField.rx.text)
             .addDisposableTo(bag)
         
