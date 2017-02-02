@@ -99,6 +99,17 @@ func <-> <T>(property: ControlProperty<T?>, variable: Variable<T>) -> Disposable
     return Disposables.create(bindToUIDisposable, bindToVariable)
 }
 
+func <-> <T: Comparable>(left: Variable<T>, right: Variable<T>) -> Disposable {
+    let leftToRight = left.asObservable()
+        .distinctUntilChanged()
+        .bindTo(right)
+    
+    let rightToLeft = right.asObservable()
+        .distinctUntilChanged()
+        .bindTo(left)
+    
+    return Disposables.create(leftToRight, rightToLeft)
+}
 
 /*
 func <-> <T>(property: ControlProperty<T>, variable: Variable<T>) -> Disposable {
@@ -145,8 +156,9 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         
         testField.text = "初期"
-
+        
         /*
+        // 双方向バインディング
         str.asObservable().bindTo(testField.rx.text).addDisposableTo(bag)
         (testField.rx.text.subscribe{ [unowned self] in
             print("subscribe")
@@ -154,10 +166,14 @@ class ViewController: UIViewController {
         }).addDisposableTo(bag)
         */
         
+        // 双方向バインディング
         (testField.rx.text <-> str).addDisposableTo(bag)
         
+        // didSetを使っても良いし、RxSwiftで宣言しておいても良い。ロジックを。Dto内で。
+        str.asObservable().distinctUntilChanged().subscribe { str in
+            
+        }.addDisposableTo(bag)
         
-
         
 //        testField.rx.text.subscribe(onNext:{})
         
