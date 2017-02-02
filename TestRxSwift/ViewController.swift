@@ -138,6 +138,8 @@ func <-> <T>(property: ControlProperty<T>, variable: Variable<T>) -> Disposable 
 
 class ViewController: UIViewController {
     
+    var str2 = Variable<String?>("あいうえお")
+    
     var str = Variable<String>("あいうえお") {
         didSet {
             print("ワオワオ")
@@ -173,6 +175,12 @@ class ViewController: UIViewController {
         str.asObservable().distinctUntilChanged().subscribe { str in
             
         }.addDisposableTo(bag)
+        
+        
+        str2.asObservable()
+            .map { $0 }
+            .bindTo(testField.rx.text)
+            .addDisposableTo(bag)
         
         
 //        testField.rx.text.subscribe(onNext:{})
